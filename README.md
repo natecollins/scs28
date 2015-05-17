@@ -3,6 +3,9 @@ Super Card Shuffle 28!
 
 Super Card Shuffle 28! (SCS28) can encode or encrypt messages into standard full decks of 52 cards for covert transport.  
 
+Written in Python and tested on Linux/OS X/Windows.  
+
+
 1. [Why Use Card Decks?](#why-use-card-decks)
 2. [Example Situation](#example-situation)
 3. [Disclaimer](#disclaimer)
