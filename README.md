@@ -10,8 +10,8 @@ Written in Python and tested on Linux/OS X/Windows.
 2. [Example Situation](#example-situation)
 3. [Disclaimer](#disclaimer)
 4. [Suggestions for Use](#suggestions-for-use)
-5. [Encoding/Decoding](#encoding-decoding)
-6. [Encrypting/Decrypting](#encrypting-decrypting)
+5. [Encoding-Decoding](#encoding-decoding)
+6. [Encrypting-Decrypting](#encrypting-decrypting)
 7. [Copyright](#copyright)
 
 
@@ -45,7 +45,7 @@ If sending decks on different routes or at different times, via multiple courier
 I've provided hash files to verify the script file against, but if you think the download of the script was compromised, you should expect the download of the hashes could be compromised as well. So if you're paranoid, don't trust your downloads and re-read the disclaimer above.    
 
 
-Encoding/Decoding
+Encoding-Decoding
 -----------------------------
 
 The simplest means of using SCS28 is to simply store a message into a deck of cards. This is not encrypted in any way, so anyone who decides to decode the deck will be able to read the message with just the single deck. Max of 28 characters allowed per deck.  
@@ -102,7 +102,7 @@ Enter card(s) [C D H S A 1-10 T J Q K] (review, back, quit): 3h
 Decoded: professionals target people
 ```
 
-Encrypting/Decrypting
+Encrypting-Decrypting
 -----------------------------
 
 You can encrypt a message into multiple decks using Shamir's Secret Sharing with the `--encrypt` flag. Also needed is a threshold flag `-t` and a total number of shares flag `-n`. The number of shares is how many separate decks will be created, and the threshold is how many of those decks are needed to re-create the original message. Max of 27 characters allowed in encrypted messages.  
