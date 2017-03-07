@@ -48,15 +48,15 @@ A hash file is provided to verify the script file against, but if you think the 
 Encoding-Decoding
 -----------------------------
 
-The simplest means of using SCS28 is to simply store a message into a deck of cards. This is not encrypted in any way, so anyone who decides to decode the deck will be able to read the message with just the single deck. Max of 28 characters allowed per deck.  
+The simplest means of using SCS28 is to simply store a message into a deck of cards. This is **not** encrypted in any way, so anyone who decides to decode the deck will be able to read the message with just the single deck. Max of 28 characters allowed per deck.  
 
-Encode Examples:
+Encode Examples:  
 ```
 ./scs28.py -e "Hey, I'm in a deck of cards!"
 AH KH 8S JS 9D AD 10D 5D 2S JH 6C 10H 2H 7H AC 10S 5C 3S 7D 8C 4D QD KC AS 8D 6D 4C 3H 10C 8H 6S 2D 4H 9H 3D JC JD 7C 2C QH KD 3C 6H 7S 4S 9C QS 5S KS 9S QC 5H
 ```
 
-Will prompt for input if not given on the command line.
+Will prompt for input if not given on the command line.  
 ```
 ./scs28.py -e
 Enter your message to encode:
@@ -65,13 +65,13 @@ Van Gelder wants asylum.
 JD 7C KD 9D 2D 10D 8D 3C 8C JC 4C 3D 4D 10C 6D 2C KC 5C 9C 5D QD QC 6C AC AD AH KS 2H 3H 4H 5H 6H 7H 8H 9H 10H JH QH KH AS 2S 3S 4S 5S 6S 7S 8S 9S 10S JS QS 7D
 ```
 
-Decode Examples:
+Decode Examples:  
 ```
 ./scs28.py -d "JD 6C 3C 4D 3D 10D QD 2D KS AH KC 7C 10C 5D 8C 8D 5H 3H QC AD 2H 4H 7D 9C 6D 5C JC AC 9D 4C 6H KD 7H 8H 9H 10H JH QH KH AS 2S 3S 4S 5S 6S 7S 8S 9S 10S JS QS 2C"
 Decoded: I FEEL FINE
 ```
 
-Again, will prompt for input if nothing to decode is provided.
+Again, will prompt for input if nothing to decode is provided.  
 ```
 ./scs28.py -d
 Input your deck of cards below.
@@ -105,9 +105,9 @@ Decoded: professionals target people
 Encrypting-Decrypting
 -----------------------------
 
-You can encrypt a message into multiple decks using Shamir's Secret Sharing with the `--encrypt` flag. Also needed is a threshold flag `-t` and a total number of shares flag `-n`. The number of shares is how many separate decks will be created, and the threshold is how many of those decks are needed to re-create the original message. Max of 27 characters allowed in encrypted messages.  
+You can encrypt a message into multiple decks using Shamir's Secret Sharing with the `--encrypt` or `-E` flags. Also needed is a threshold flag `-t` and a total number of shares flag `-n`. The number of shares is how many separate decks will be created, and the threshold is how many of those decks are needed to re-create the original message. Max of 27 characters allowed in encrypted messages.  
 
-Encrypting Examples:
+Encrypting Examples:  
 ```
 ./scs28.py --encrypt -t 2 -n 3 "Talk is cheap"
 3D 8C KC 10C 5S 4H 2C 8D 5H 10D 9H 6S 3S 3H AS 10S 9S 6D KS 4C KD 6C 5C AD 2D 9D 4S JH QC QD QH 6H AH 7D 10H 5D 7H 8H JD AC JC 9C 7S 2H 2S KH JS 8S 3C 7C QS 4D 
@@ -115,7 +115,7 @@ JC 4S AD 7H 9C JH 4H AC 8C QC 5S QH 7C 8D 6C 2C QD 2H 10H KS 10D KD 5H 6S 10C 3S
 9S QC 4H KS 10H QD 2D 10C 8C 7D 2C 3H 6H 3D 7H 8H 5S 8D KC 9C JC 5D KD 7C AH JD 4S 10D AC 7S JH AD 5H 2S 3C 4C KH 6S JS 5C 3S 2H 8S QH 9H 9D AS 6C 4D 10S QS 6D
 ```
 
-Can also print the decks veritcally for easier reading:
+Can also print the decks veritcally for easier reading:  
 ```
 ./scs28.py --encrypt -v -t 3 -n 5
 Enter your message to encrypt:
@@ -175,9 +175,9 @@ QS  QS  QS  QS  QS
 AH  5S  8S  8C  JC
 ```
 
-Decrypting Examples:
+Decrypting Examples:  
 
-You may enter multiple cards, up to a full deck, at the input prompts.
+To decrypt a message, use either the `--decrypt` or `-D` flag. You'll need to know the threshold used when the message was encrypted and pass it via the `-t` flag. You may enter multiple cards, up to a full deck at a time, at the input prompts. You will be prompted to enter a total number of decks equal to the threshold specified.  
 ```
 ./scs28.py --decrypt -t 2
 Input your deck of cards below.
@@ -191,9 +191,8 @@ Decrypted: Two plus two make four.
 
 Copyright
 -----------------------------
-by Nathan Collins <npcollins@ gmail.com>
+by Nathan Collins <npcollins@ gmail.com>  
 
-This is released under the MIT open source license. See the LICENCE file for details.
-
+This is released under the MIT open source license. See the LICENCE file for details.  
 
 
