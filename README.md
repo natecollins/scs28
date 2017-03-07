@@ -42,7 +42,7 @@ The order of cards in the deck is important, in fact, that's pretty much of all 
 
 If sending decks on different routes or at different times, via multiple couriers, make sure to use different types of decks or different quality. If __Eve__ notices that a whole host of individuals keep passing by with crisp new black label Tricycle brand cards, she might get suspicious.  
 
-I've provided hash files to verify the script file against, but if you think the download of the script was compromised, you should expect the download of the hashes could be compromised as well. So if you're paranoid, don't trust your downloads and re-read the disclaimer above.    
+A hash file is provided to verify the script file against, but if you think the download of the script was compromised, you should expect the download of the hash could be compromised as well. So if you're paranoid, don't trust your downloads and re-read the disclaimer above.  
 
 
 Encoding-Decoding
@@ -191,6 +191,7 @@ Decrypted: Two plus two make four.
 
 Copyright
 -----------------------------
+by Nathan Collins <npcollins@ gmail.com>
 
 This is released under the MIT open source license. See the LICENCE file for details.
 

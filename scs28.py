@@ -52,11 +52,12 @@ import argparse
 import sys
 import math
 import random
+import codecs
 
 __author__ = "Nathan Collins"
 __copyight__ = "Copyright (c) 2015, Nathan Collins"
 __licence__ = "MIT"
-__version__ = "0.9"
+__version__ = "0.9.1"
 __email__ = "npcollins<a>gmail_com"
 
 
@@ -75,10 +76,10 @@ def main(argv=None):
             help='encode simple message into a deck of cards; 28 characters maximum')
     apar.add_argument('-d','--decode', action='store_true',
             help='decode of simple message from a deck of cards; will prompt for card entry')
-    apar.add_argument('--encrypt', action='store_true',
+    apar.add_argument('-E','--encrypt', action='store_true',
             help='encrypt the message using SSS; 27 chars maximum; requires flags -t and -n')
-    apar.add_argument('--decrypt', action='store_true',
-            help='decrypt using SSSS; requires flag -t')
+    apar.add_argument('-D','--decrypt', action='store_true',
+            help='decrypt using SSS; requires flag -t')
     apar.add_argument('-t', type=int, metavar='THRESH',
             help='sets the threshold for SSS; this is exact number of decks required to decrypt a message; can range from 2 to the total number of shares')
     apar.add_argument('-n', type=int, metavar='SHARES',
@@ -98,13 +99,13 @@ def main(argv=None):
         ######################
         #### ENCODE CARDS ####
         ######################
-        msg = ''
+        msg = b('')
         if args.message:
-            msg = args.message
+            msg = b(args.message)
         else:
             print ("Enter your message to encode:")
             print ("|------ 28 chars max ------|")
-            msg = sys.stdin.readline().strip()
+            msg = b(sys.stdin.readline().strip())
 
         if len(msg) > 28:
             msg = msg[:28]
@@ -148,13 +149,13 @@ def main(argv=None):
 
         if len(deck) == 52:
             xnum = decodeCardsToNumber(deck)
-            print ("Decoded:", numberToMessage(xnum))
+            print ("\nDecoded:", numberToMessage(xnum))
 
     elif args.encrypt:
         #######################
         #### ENCRYPT CARDS ####
         #######################
-        msg = ''
+        msg = b('')
         if not args.t or args.t < 2:
             print ("FAILURE: The threshold is not set properly (-t flag). If must be at least 2 and no more than the number of shares (the -n flag).", file=sys.stderr)
             sys.exit(1)
@@ -163,11 +164,11 @@ def main(argv=None):
             sys.exit(1)
 
         if args.message:
-            msg = args.message
+            msg = b(args.message)
         else:
             print ("Enter your message to encrypt:")
             print ("|------ 27 chars max -----|")
-            msg = sys.stdin.readline().strip()
+            msg = b(sys.stdin.readline().strip())
 
         secrets = messageToSecrets(msg, int(args.t), int(args.n))
 
@@ -190,14 +191,21 @@ def main(argv=None):
             sys.exit(1)
 
         secrets = []
-        for di in xrange(0,args.t):
+        for di in range(0,args.t):
             secrets.append( cardsToSecret(deckInput()) )
 
         msg = secretsToMessage(secrets)
-        print ("Decrypted:", msg)
+        print ("\nDecrypted:", msg)
 
     else:
         apar.print_help()
+
+
+def b(s):
+    """
+    Shorthand function to convert Python 3 string to bytes
+    """
+    return str.encode(s)
 
 
 ###############################
@@ -269,8 +277,8 @@ def outputDecksVertical(decks):
     """
     # reorder decks for output
     odecks = []
-    for di in xrange(0,len(decks)):
-        for ci in xrange(0,len(decks[di])):
+    for di in range(0,len(decks)):
+        for ci in range(0,len(decks[di])):
             if len(odecks) < (ci+1):
                 odecks.append( [decks[di][ci]] )
             else:
@@ -309,7 +317,7 @@ def decGCD(a, b):
         return [a, 1, 0]
 
     recur = decGCD(b, a % b)
-    return [ recur[0], recur[2], recur[1] - recur[2] * (a/b) ]
+    return [ recur[0], recur[2], recur[1] - recur[2] * (a//b) ]
 
 
 def modInv(k):
@@ -389,10 +397,21 @@ def cardsToSecret(encodedCards):
         encodedNums.append(ec)
 
     secret_num = decodeCardsToNumber(encodedNums)
-    secret = hex(secret_num)[2:-1]
+    secret = hexSecret(secret_num)
     secret = secret.rjust(56,'0')
 
     return secret
+
+
+def hexSecret(secret_num):
+    """
+    Secret num to hex differences between Python 2 and 3
+    """
+    pyVer = sys.version_info
+    if pyVer[0] == 3:
+        return hex(secret_num)[2:]
+    else:
+        return hex(secret_num)[2:-1]
 
 ###############################
 ## Converting Messages
@@ -427,26 +446,37 @@ def secretsToMessage(secrets):
 
 
 def messageToNumber(msg):
-    msg = msg.rjust(27,'\0')
-    hexnum = msg.encode('hex');
+    msg = msg.rjust(27,b('\0'))
+    hexnum = codecs.encode(msg, 'hex');
     return int(hexnum,16)
 
 
 def numberToMessage(num):
-    hexnum = "{0:0{1}x}".format(num, 54)
-    return hexnum.decode('hex').strip('\0')
+    hexnum = b("{0:0{1}x}".format(num, 54))
+    return codecs.decode(hexnum, 'hex').strip(b('\0'))
 
 
 ###############################
 ## Cards as Numbers
 ###############################
 
+def compat_translate(s):
+    """
+    Compatability function to support Python 2 and 3.1 style tranlate functions
+    """
+    pyVer = sys.version_info
+    if pyVer[0] == 3 and pyVer[1] >= 1:
+        return s.translate(str.maketrans('','',".-_:'"))
+    else:
+        return s.translate(None,".-_:'")
+
+
 def numberToCard(num):
     if num > 51 or num < 0:
         print("FAILURE: Invalid card number: "+str(num), file=sys.stderr)
         sys.exit(1)
 
-    nsuit = num / 13
+    nsuit = num // 13
     suit = "C"
     if (nsuit == 1):
         suit = "D"
@@ -469,7 +499,7 @@ def numberToCard(num):
 
 
 def cardToNumber(cstr):
-    cstr = cstr.upper().strip().translate(None,".-_:'")
+    cstr = compat_translate( cstr.upper().strip() )
     suit = ""
     card = ""
     if (cstr[0] in "CDHS"):
@@ -525,7 +555,7 @@ def swap(l, p1, p2):
 
 
 def swapLeft(l, v, n):
-    for x in xrange(0,n):
+    for x in range(0,n):
         i1 = l.index(v)
         i2 = i1 - 1
         if i2 < 0:
@@ -535,7 +565,7 @@ def swapLeft(l, v, n):
 
 
 def swapRight(l, v, n):
-    for x in xrange(0,n):
+    for x in range(0,n):
         i1 = l.index(v)
         i2 = i1 + 1
         if i2 >= len(l):
@@ -556,8 +586,8 @@ def encodeNumberToCards(number):
     i = len(cv)
     cn = number
     for c,v in cv:
-        instr.append( (c, cn / v) )
-        cn = cn - (cn / v) * v
+        instr.append( (c, cn // v) )
+        cn = cn - (cn // v) * v
         i = i - 1
     instr.reverse()
 
@@ -599,15 +629,15 @@ def test():
     """
     Perform a quick test to make sure everything works.
     """
-    message = "Super Card Shuffle 28!"
+    message = b("Super Card Shuffle 28!")
 
-    print("Encoding message: "+message)
+    print("Encoding message: ", message)
     mnum = messageToNumber(message)
     deck = encodeNumberToCards(mnum)
     xnum = decodeCardsToNumber(deck)
-    print ("Decoded message:", numberToMessage(xnum))
+    print("Decoded message:", numberToMessage(xnum))
 
-    print("Encrypting message: "+message)
+    print("Encrypting message: ", message)
     secrets = messageToSecrets(message)
 
     # convert secrets to cards and print in orderly columns
@@ -621,14 +651,14 @@ def test():
         outputDeckHorizontal(d)
 
     # Pass secrets through card encoder/decoders
-    for si in xrange(0,len(secrets)):
+    for si in range(0,len(secrets)):
         ctransformed = cardsToSecret( secretToCards(secrets[si]) )
         print ("Cards in deck", si+1, "decoded ok:", (ctransformed == secrets[si]))
 
     print("\nTesting combine...")
     secrets.pop( random.randint(0, len(secrets)-1) )
     message = secretsToMessage(secrets)
-    print("Decrypted message: "+message)
+    print("Decrypted message: ", message)
 
 
 ###############################
