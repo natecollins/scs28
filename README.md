@@ -3,7 +3,7 @@ Super Card Shuffle 28!
 
 Super Card Shuffle 28! (SCS28) can encode or encrypt messages into standard full decks of 52 cards for covert transport.  
 
-Written in Python and tested on Linux/OS X/Windows.  
+Written in Python (works in both 2 and 3); tested on Linux, OS X, and Windows.  
 
 
 1. [Why Use Card Decks?](#why-use-card-decks)
@@ -47,7 +47,6 @@ A hash file is provided to verify the script file against, but if you think the 
 
 Encoding-Decoding
 -----------------------------
-
 The simplest means of using SCS28 is to simply store a message into a deck of cards. This is **not** encrypted in any way, so anyone who decides to decode the deck will be able to read the message with just the single deck. Max of 28 characters allowed per deck.  
 
 Encode Examples:  
@@ -104,7 +103,6 @@ Decoded: professionals target people
 
 Encrypting-Decrypting
 -----------------------------
-
 You can encrypt a message into multiple decks using Shamir's Secret Sharing with the `--encrypt` or `-E` flags. Also needed is a threshold flag `-t` and a total number of shares flag `-n`. The number of shares is how many separate decks will be created, and the threshold is how many of those decks are needed to re-create the original message. Max of 27 characters allowed in encrypted messages.  
 
 Encrypting Examples:  
@@ -182,11 +180,11 @@ To decrypt a message, use either the `--decrypt` or `-D` flag. You'll need to kn
 ./scs28.py --decrypt -t 2
 Input your deck of cards below.
 Cards entered: 0  
-Enter card(s) [C D H S A 1-10 T J Q K] (review, back, quit): 5D 8H 8C 10H 6H KC AD QD 3D 2D 2C 10D 3H KH 2H AH 6D KS 5S JH 2S 3S 9D 7D 4D 8S JD 3C QH 7C 4C 10C 5C 8D 6C 5H KD 9S 9C 4H JS 7S 9H QC AS 4S AC 6S JC 7H QS 10S
+Enter card(s) [C D H S A 1-10 T J Q K] (review, back, quit): JC 5C 2S QC 10D 6C 4S AC 8H 10S 6D 6H 9D 4C 10C KD 4H 7D QH 9H 9C KS 7S 8D JH 5S 3D 8S AD QD 3S KH 5D 3C AH KC 8C AS 2C 3H JS 7C 9S 5H 2D 2H JD 4D 10H 7H QS 6S
 Input your deck of cards below.
 Cards entered: 0  
-Enter card(s) [C D H S A 1-10 T J Q K] (review, back, quit): AS QH 6C 9D 9H 2H 7S 5S 3S JH 8C 3C 10D AD 5H 6D 5C JC 7D 8H 6H AH 8S 10S 10H 10C KC JD QC 2D 4C 2C 9S JS 7C QD 4D KH 2S AC KD 3D 4S 6S 9C 4H 5D KS 8D 7H QS 3H
-Decrypted: Two plus two make four.
+Enter card(s) [C D H S A 1-10 T J Q K] (review, back, quit): 5S 9C JC KH 5D 4D 5H 9H 2H 4H QH 9D 8H 8D 6H 6C 3C KD 9S 2S 3S 10C 6S AC 8C 3D 10D 7C 5C AD 6D KS 4S 7S 7H AH 8S 3H JS 10S QD 2C KC AS 10H 7D JH 2D 4C QC QS JD
+Decrypted: Shall we begin again?
 ```
 
 Author and License
