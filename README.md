@@ -12,7 +12,7 @@ Written in Python and tested on Linux/OS X/Windows.
 4. [Suggestions for Use](#suggestions-for-use)
 5. [Encoding-Decoding](#encoding-decoding)
 6. [Encrypting-Decrypting](#encrypting-decrypting)
-7. [Copyright](#copyright)
+7. [Author and License](#author-and-license)
 
 
 Why Use Card Decks?
@@ -189,9 +189,9 @@ Enter card(s) [C D H S A 1-10 T J Q K] (review, back, quit): AS QH 6C 9D 9H 2H 7
 Decrypted: Two plus two make four.
 ```
 
-Copyright
+Author and License
 -----------------------------
-by Nathan Collins <npcollins@ gmail.com>  
+Copyright (c) 2015 by Nathan Collins [npcollins@ gmail.com]  
 
 This is released under the MIT open source license. See the LICENCE file for details.  
 
