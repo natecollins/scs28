@@ -57,7 +57,7 @@ import codecs
 __author__ = "Nathan Collins"
 __copyight__ = "Copyright (c) 2015, Nathan Collins"
 __licence__ = "MIT"
-__version__ = "0.9.1"
+__version__ = "0.9.2"
 __email__ = "npcollins<a>gmail_com"
 
 
@@ -86,26 +86,29 @@ def main(argv=None):
             help='sets the total share count for SSS; this is number of decks generated when encrypting a message; must be at least as large as the threshold; maximum value of 64')
     apar.add_argument('-v','--vertical', action='store_true',
             help='output decks in vertical columns instead of on single lines')
+    apar.add_argument('-q','--quiet', action='store_true',
+            help='do not print any prompts or help')
     apar.add_argument('--test', action='store_true',
             help=argparse.SUPPRESS)
 
-    args = apar.parse_args(argv)
+    global pargs
+    pargs = apar.parse_args(argv)
 
     # Choose action to perform
-    if args.test:
+    if pargs.test:
         test()
 
-    elif args.encode:
+    elif pargs.encode:
         ######################
         #### ENCODE CARDS ####
         ######################
         msg = b('')
-        if args.message:
-            msg = b(args.message)
+        if pargs.message:
+            msg = b(pargs.message)
         else:
-            print ("Enter your message to encode:")
-            print ("|------ 28 chars max ------|")
-            msg = b(sys.stdin.readline().strip())
+            qprint ("Enter your message to encode:")
+            qprint ("|------ 28 chars max ------|")
+            msg = breadline()
 
         if len(msg) > 28:
             msg = msg[:28]
@@ -119,18 +122,18 @@ def main(argv=None):
             deck.append(en)
         decks = [ deck ]
 
-        if args.vertical:
+        if pargs.vertical:
             outputDecksVertical(decks)
         else:
             for d in decks:
                 outputDeckHorizontal(d)
 
-    elif args.decode:
+    elif pargs.decode:
         ######################
         #### DECODE CARDS ####
         ######################
-        if args.message:
-            card_strs = args.message.split()
+        if pargs.message:
+            card_strs = pargs.message.split()
             deck = []
             for cstr in card_strs:
                 cnum = cardToNumber(cstr)
@@ -149,63 +152,88 @@ def main(argv=None):
 
         if len(deck) == 52:
             xnum = decodeCardsToNumber(deck)
-            print ("\nDecoded:", numberToMessage(xnum))
+            if pargs.quiet:
+                print (numberToMessage(xnum))
+            else:
+                print ("\nDecoded:", numberToMessage(xnum))
 
-    elif args.encrypt:
+    elif pargs.encrypt:
         #######################
         #### ENCRYPT CARDS ####
         #######################
         msg = b('')
-        if not args.t or args.t < 2:
+        if not pargs.t or pargs.t < 2:
             print ("FAILURE: The threshold is not set properly (-t flag). If must be at least 2 and no more than the number of shares (the -n flag).", file=sys.stderr)
             sys.exit(1)
-        if not args.n or args.t > args.n:
+        if not pargs.n or pargs.t > pargs.n:
             print ("FAILURE: The number of shares is not set properly (-n flag). If must be at least as large as the threshold (the -t flag) and no larger than 64.", file=sys.stderr)
             sys.exit(1)
 
-        if args.message:
-            msg = b(args.message)
+        if pargs.message:
+            msg = b(pargs.message)
         else:
-            print ("Enter your message to encrypt:")
-            print ("|------ 27 chars max -----|")
-            msg = b(sys.stdin.readline().strip())
+            qprint ("Enter your message to encrypt:")
+            qprint ("|------ 27 chars max -----|")
+            msg = breadline()
 
-        secrets = messageToSecrets(msg, int(args.t), int(args.n))
+        secrets = messageToSecrets(msg, int(pargs.t), int(pargs.n))
 
         decks = []
         for sec in secrets:
             decks.append( secretToCards(sec) )
 
-        if args.vertical:
+        if pargs.vertical:
             outputDecksVertical(decks)
         else:
             for d in decks:
                 outputDeckHorizontal(d)
 
-    elif args.decrypt:
+    elif pargs.decrypt:
         #######################
         #### DECRYPT CARDS ####
         #######################
-        if not args.t or args.t < 2 or args.t > 64:
+        if not pargs.t or pargs.t < 2 or pargs.t > 64:
             print ("FAILURE: The threshold is not set properly (-t flag). If must match the threshold that was set when the decks were encrypted; can range from 2 to 64.", file=sys.stderr)
             sys.exit(1)
 
         secrets = []
-        for di in range(0,args.t):
+        for di in range(0,pargs.t):
             secrets.append( cardsToSecret(deckInput()) )
 
         msg = secretsToMessage(secrets)
-        print ("\nDecrypted:", msg)
+        if pargs.quiet:
+            print (msg)
+        else:
+            print ("\nDecrypted:", msg)
 
     else:
         apar.print_help()
 
+def breadline():
+    """
+    Having nothing to do with bread or rationing, this function grabs a
+    binary line of data from input and returns it, for both Python 2 and 3
+    """
+    pyVer = sys.version_info
+    if pyVer[0] == 2:
+        return sys.stdin.readline().strip()
+    return sys.stdin.buffer.readline().strip()
 
 def b(s):
     """
-    Shorthand function to convert Python 3 string to bytes
+    Shorthand function to convert str to bytes if running Python 3
     """
+    pyVer = sys.version_info
+    if pyVer[0] == 2:
+        return s
     return str.encode(s)
+
+def qprint(*args, **kwargs):
+    """
+    Print function, unless quiet flag was set
+    """
+    if not pargs.quiet:
+        print(*args, **kwargs)
 
 
 ###############################
@@ -224,7 +252,7 @@ def deckInput():
     cards = []
     instr = 'NONE'
     failcount = 0
-    print ("Input your deck of cards below.")
+    qprint ("Input your deck of cards below.")
     while len(cards) != 52 and instr:
         if instr == 'QUIT':
             sys.exit(0)
@@ -254,8 +282,8 @@ def deckInput():
                     sys.exit(1)
 
         if len(cards) < 52:
-            print("Cards entered:" ,len(cards), (" " if len(cards) == 0 else " Last card: " + numberToCard(cards[-1])))
-            print("Enter card(s) [C D H S A 1-10 T J Q K] (review, back, quit): ", end='')
+            qprint("Cards entered:" ,len(cards), (" " if len(cards) == 0 else " Last card: " + numberToCard(cards[-1])))
+            qprint("Enter card(s) [C D H S A 1-10 T J Q K] (review, back, quit): ", end='')
             instr = sys.stdin.readline().upper().strip()
 
     if not instr:

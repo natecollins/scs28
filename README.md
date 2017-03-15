@@ -12,7 +12,8 @@ Written in Python (works in both 2 and 3); tested on Linux, OS X, and Windows.
 4. [Suggestions for Use](#suggestions-for-use)
 5. [Encoding-Decoding](#encoding-decoding)
 6. [Encrypting-Decrypting](#encrypting-decrypting)
-7. [Author and License](#author-and-license)
+7. [Binary Data and IO Redirection](#binary-data-and-io-redirection)
+8. [Author and License](#author-and-license)
 
 
 Why Use Card Decks?
@@ -186,6 +187,23 @@ Cards entered: 0
 Enter card(s) [C D H S A 1-10 T J Q K] (review, back, quit): 5S 9C JC KH 5D 4D 5H 9H 2H 4H QH 9D 8H 8D 6H 6C 3C KD 9S 2S 3S 10C 6S AC 8C 3D 10D 7C 5C AD 6D KS 4S 7S 7H AH 8S 3H JS 10S QD 2C KC AS 10H 7D JH 2D 4C QC QS JD
 Decrypted: Shall we begin again?
 ```
+
+
+Binary Data and IO Redirection
+-----------------------------
+You can encode/encrypt binary data into a deck of cards as well. Simply put your binary data into a file (following normal length restrictions of 28 bytes for simple encoding, and 27 bytes for encrypting with SSS), and use IO redirection. In this use case, use of the `-q` or `--quiet` flag is recommended.  
+
+Input Redirection: Will read input from `mybash.bin` file.  
+```
+./scs28.py -q -e < myhash.bin
+2C QD AS 7H AC 10C 5C 3H KS KD 6D 3S 4D KH 3C 8D QH 6H 7D KC JC 2D 9H QC AD 4H AH 5H 9C 8H 3D 10D JD 2H 10H 9D 4C 8C 5D 6C 7C JH 4S 5S 6S 7S 8S 9S 10S JS QS 2S
+```
+
+Input and Output Redirection: Will read input from `cards.txt` and send output to `decoded.txt`.  
+```
+./scs28.py -q -d < cards.txt > decoded.txt
+```
+
 
 Author and License
 -----------------------------
